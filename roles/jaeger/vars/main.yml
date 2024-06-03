@@ -1,5 +1,5 @@
 ---
-# vars file for grafana_loki
-loki_version: 1.57.0
-download_url: "https://github.com/jaegertracing/jaeger/releases/download/v{{ loki_version }}/jaeger-{{ loki_version }}-linux-arm64.tar.gz"
+# vars file for jaeger
+jaeger_version: 1.57.0
+download_url: "https://github.com/jaegertracing/jaeger/releases/download/v{{ jaeger_version }}/jaeger-{{ jaeger_version }}-linux-arm64.tar.gz"
 install_dir: /usr/local/jaeger

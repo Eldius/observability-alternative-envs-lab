@@ -1,2 +1,3 @@
 ---
 # vars file for grafana_loki
+config_dir: /usr/local/loki
