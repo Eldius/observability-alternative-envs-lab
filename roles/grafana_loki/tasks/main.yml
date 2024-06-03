@@ -1,10 +1,75 @@
 ---
 # tasks file for grafana_loki
 
-- name: Install Loki package
-  ansible.builtin.package:
+- name: Create Loki user group
+  ansible.builtin.group:
     name: loki
-    state: latest
-  become: yes
+    state: present
+  become: true
+  notify:
+    - Restart Loki
+
+- name: Create Loki system user
+  ansible.builtin.user:
+    name: loki
+    comment: Loki service user
+    group: loki
+    state: present
+    system : true
+  become: true
+  notify:
+    - Restart Loki
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: loki
+  become: true
+  loop:
+    - "{{ install_dir }}"
+    - "{{ install_dir }}/conf"
+    - "{{ install_dir }}/data"
+  notify:
+    - Restart Loki
+
+
+# - name: Unpack Loki bin package
+#   ansible.builtin.unarchive:
+#     src: "{{ download_url }}"
+#     dest: "{{ install_dir }}"
+#     mode: '0755'
+#     owner: loki
+#     remote_src: true
+#     # extra_opts:
+#     #   - '--strip-components=1'
+#     #   - '--show-stored-names'
+#   become: true
+#   notify:
+#     - Restart Loki
+
+- name: Install a .deb package
+  ansible.builtin.apt:
+    deb: "{{ package_url }}"
+  become: true
+
+- name: Create service definition file
+  ansible.builtin.template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+    owner: root
+    group: root
+  become: true
+  notify:
+    - Restart Loki
+
+- name: Create Loki configuration file
+  ansible.builtin.template:
+    src: local-config.yaml.j2
+    dest: "{{ install_dir }}/conf/local-config.yaml"
+    owner: loki
+    group: loki
+  become: true
   notify:
     - Restart Loki

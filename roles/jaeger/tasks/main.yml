@@ -2,9 +2,9 @@
 # tasks file for grafana_loki
 # - name: Update and upgrade apt
 #   ansible.builtin.apt:
-#     update_cache: yes
-#     autoclean: yes
-#     autoremove: yes
+#     update_cache: true
+#     autoclean: true
+#     autoremove: true
 #     upgrade: full
 #   become: true
 
@@ -12,7 +12,7 @@
   ansible.builtin.group:
     name: jaeger
     state: present
-  become: yes
+  become: true
   notify:
     - Restart Jaeger
 
@@ -22,8 +22,8 @@
     comment: Jaeger service user
     group: jaeger
     state: present
-    system : yes
-  become: yes
+    system : true
+  become: true
   notify:
     - Restart Jaeger
 
@@ -33,7 +33,7 @@
     state: directory
     mode: '0755'
     owner: jaeger
-  become: yes
+  become: true
   notify:
     - Restart Jaeger
 
@@ -43,11 +43,11 @@
     dest: "{{ install_dir }}"
     mode: '0755'
     owner: jaeger
-    remote_src: yes
+    remote_src: true
     extra_opts:
       - '--strip-components=1'
       - '--show-stored-names'
-  become: yes
+  become: true
   notify:
     - Restart Jaeger
 
@@ -57,6 +57,6 @@
     dest: /etc/systemd/system/jaeger.service
     owner: root
     group: root
-  become: yes
+  become: true
   notify:
     - Restart Jaeger

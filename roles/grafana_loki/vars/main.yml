@@ -1,3 +1,6 @@
 ---
 # vars file for grafana_loki
-config_dir: /usr/local/loki
+install_dir: /usr/local/loki
+loki_version: 3.0.0
+download_url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-canary-linux-arm64.zip"
+package_url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki_{{ loki_version }}_arm64.deb"

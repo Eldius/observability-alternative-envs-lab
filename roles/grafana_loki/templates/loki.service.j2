@@ -5,7 +5,7 @@ Description=Loki Service
 User=loki
 Group=loki
 WorkingDirectory={{ install_dir }}
-ExecStart={{ install_dir }}/jaeger-all-in-one
+ExecStart=/usr/bin/loki -config.file={{ install_dir }}/conf/local-config.yaml
 StandardOutput=syslog
 StandardError=syslog
 
