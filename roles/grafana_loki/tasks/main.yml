@@ -49,7 +49,7 @@
 #   notify:
 #     - Restart Loki
 
-- name: Install a .deb package
+- name: Install a Grafana Loki package
   ansible.builtin.apt:
     deb: "{{ package_url }}"
   become: true
