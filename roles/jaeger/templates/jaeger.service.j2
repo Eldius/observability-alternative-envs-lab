@@ -1,0 +1,13 @@
+[Unit]
+Description=Jaeger Service
+
+[Service]
+User=jaeger
+Group=jaeger
+WorkingDirectory={{ install_dir }}
+ExecStart={{ install_dir }}/jaeger-all-in-one
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

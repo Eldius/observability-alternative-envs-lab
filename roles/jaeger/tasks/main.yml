@@ -1,0 +1,62 @@
+---
+# tasks file for grafana_loki
+# - name: Update and upgrade apt
+#   ansible.builtin.apt:
+#     update_cache: yes
+#     autoclean: yes
+#     autoremove: yes
+#     upgrade: full
+#   become: true
+
+- name: Create Jaeger user group
+  ansible.builtin.group:
+    name: jaeger
+    state: present
+  become: yes
+  notify:
+    - Restart Jaeger
+
+- name: Create Jaeger system user
+  ansible.builtin.user:
+    name: jaeger
+    comment: Jaeger service user
+    group: jaeger
+    state: present
+    system : yes
+  become: yes
+  notify:
+    - Restart Jaeger
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ install_dir }}"
+    state: directory
+    mode: '0755'
+    owner: jaeger
+  become: yes
+  notify:
+    - Restart Jaeger
+
+- name: Unpack Jaeger bin package
+  ansible.builtin.unarchive:
+    src: "{{ download_url }}"
+    dest: "{{ install_dir }}"
+    mode: '0755'
+    owner: jaeger
+    remote_src: yes
+    extra_opts:
+      - '--strip-components=1'
+      - '--show-stored-names'
+  become: yes
+  notify:
+    - Restart Jaeger
+
+- name: Create service definition file
+  ansible.builtin.template:
+    src: jaeger.service.j2
+    dest: /etc/systemd/system/jaeger.service
+    owner: root
+    group: root
+  become: yes
+  notify:
+    - Restart Jaeger

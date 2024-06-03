@@ -1,0 +1,8 @@
+---
+# handlers file for grafana_loki
+- name: Restart Jaeger
+  ansible.builtin.service:
+    name: "jaeger"
+    state: "restarted"
+    # enabled: yes
+  become: yes
