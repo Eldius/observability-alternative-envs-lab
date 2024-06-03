@@ -2,9 +2,9 @@
 loki:
 	ansible-playbook \
 		-i env/dev \
-		loki-playbook.yml
+		playbooks/loki-playbook.yml
 
 jaeger:
 	ansible-playbook \
 		-i env/dev \
-		jaeger-playbook.yml
+		playbooks/jaeger-playbook.yml
