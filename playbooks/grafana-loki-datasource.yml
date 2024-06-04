@@ -1,0 +1,14 @@
+---
+- hosts: node1
+  tasks:
+    - name: Create Loki datasource
+      community.grafana.grafana_datasource:
+        name: Loki
+        ds_type: loki
+        ds_url: http://localhost:3100
+        url: http://192.168.0.68:3000
+        access: proxy
+        state: present
+        tls_skip_verify: true
+        url_username: admin
+        url_password: 123Senha

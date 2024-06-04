@@ -13,3 +13,14 @@ jaeger:
 	ansible-playbook \
 		-i env/dev \
 		playbooks/jaeger-playbook.yml
+
+setup: loki jaeger grafana
+
+test:
+	# ansible-playbook \
+	# 	-i env/dev \
+	# 	playbooks/grafana-loki-datasource.yml
+	ansible-playbook \
+		-i env/dev \
+		playbooks/grafana-loki-dashboard.yml
+	

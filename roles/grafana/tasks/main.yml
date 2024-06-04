@@ -21,13 +21,13 @@
   notify:
     - Restart Grafana
 
-- name: Configure Loki dashboard
-  ansible.builtin.copy:
-    src: ../files/dashboards/loki.json
-    dest: /usr/share/grafana/conf/provisioning/dashboards/loki.json
-  become: true
-  notify:
-    - Restart Grafana
+# - name: Configure Loki dashboard
+#   ansible.builtin.copy:
+#     src: ../files/dashboards/loki.json
+#     dest: /usr/share/grafana/conf/provisioning/dashboards/logs.json
+#   become: true
+#   notify:
+#     - Restart Grafana
 
 - name: Generate custom.ini file
   ansible.builtin.copy:
@@ -42,8 +42,11 @@
     name: Loki
     ds_type: loki
     ds_url: http://localhost:3100
+    url: http://192.168.0.68:3000
     access: proxy
     tls_skip_verify: true
+    url_username: eldius
+    url_password: 123Senha
   when: create_loki_datasource
 
 - name: Create Prometheus datasource
