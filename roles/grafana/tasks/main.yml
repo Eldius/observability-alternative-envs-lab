@@ -1,66 +1,38 @@
 ---
 # tasks file for grafana
-# - name: Add Grafana apt repository key
-#   ansible.builtin.get_url:
-#     url: https://apt.grafana.com/gpg.key
-#     dest: /etc/apt/keyrings/grafana.gpg
-#   become: true
-
-# - name: Add Grafana apt repository
-#   ansible.builtin.apt_repository:
-#     repo: "deb [arch=arm64 signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
-#     state: present
-#   become: true
-
 - name: Debug architecture
   debug:
     msg: "{{ ansible_architecture }}"
-
-# - name: Add Grafana apt repository
-#   block:
-#     - name: Add Grafana apt repository key
-#       ansible.builtin.get_url:
-#         url: https://apt.grafana.com/gpg.key
-#         dest: /etc/apt/trusted.gpg.d/grafana.gpg
-#         mode: "0644"
-
-#     - name: Add Grafana apt repository itself
-#       ansible.builtin.apt_repository:
-#         repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
-#         filename: /etc/apt/sources.list.d/grafana.list
-#         state: present
-#   become: true
-
-# - name: Install Grafana package
-#   ansible.builtin.apt:
-#     name: grafana
-#     state: latest
-#     update_cache: true
-#   become: true
+  notify:
+    - Restart Grafana
 
 - name: Install Grafana package
   ansible.builtin.apt:
     deb: "{{ package_url }}"
   become: true
-
-- name: Setup datasources
-  ansible.builtin.template:
-    src: datasource.yaml.j2
-    dest: /etc/systemd/system/loki.service
-    owner: root
-    group: root
-  become: true
-  loop:
-    - 
   notify:
     - Restart Grafana
 
-- name: Creating Loki datasource
-  ansible.builtin.file:
-    src: ldatasources/oki.yaml
+- name: Configure Loki datasource
+  ansible.builtin.copy:
+    src: ../files/datasources/loki.yaml
     dest: /usr/share/grafana/conf/provisioning/datasources/loki.yaml
-    owner: grafana
-    group: grafana
+  become: true
+  notify:
+    - Restart Grafana
+
+- name: Configure Loki dashboard
+  ansible.builtin.copy:
+    src: ../files/dashboards/loki.json
+    dest: /usr/share/grafana/conf/provisioning/dashboards/loki.json
+  become: true
+  notify:
+    - Restart Grafana
+
+- name: Generate custom.ini file
+  ansible.builtin.copy:
+    src: ../files/conf/custom.ini
+    dest: /etc/grafana/grafana.ini
   become: true
   notify:
     - Restart Grafana
