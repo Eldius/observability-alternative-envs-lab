@@ -1,0 +1,4 @@
+---
+# vars file for otel_collector
+collector_version: 0.102.0
+package_url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ collector_version }}/otelcol_{{ collector_version }}_linux_arm64.deb"

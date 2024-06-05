@@ -1,0 +1,31 @@
+---
+receivers:
+  otlp: # the OTLP receiver the app is sending traces to
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  otlp/jaeger: # Jaeger supports OTLP directly
+    endpoint: https://192.168.0.68:4317
+  prometheusremotewrite: # the PRW exporter, to ingest metrics to backend
+    endpoint: https://192.168.0.68:9090/v1/api/remote_write
+
+service:
+  pipelines:
+    traces/dev:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/jaeger]
+    metrics/prod:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheusremotewrite]
+    # logs/dev:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [file]
+  extensions: [health_check, pprof, zpages]

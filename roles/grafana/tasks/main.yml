@@ -3,23 +3,43 @@
 - name: Debug architecture
   debug:
     msg: "{{ ansible_architecture }}"
-  notify:
-    - Restart Grafana
+
 
 - name: Install Grafana package
   ansible.builtin.apt:
     deb: "{{ package_url }}"
   become: true
-  notify:
-    - Restart Grafana
 
 - name: Generate custom.ini file
-  ansible.builtin.copy:
-    src: ../files/conf/custom.ini
+  ansible.builtin.template:
+    src: grafana.ini
     dest: /etc/grafana/grafana.ini
+    owner: grafana
+    group: grafana
   become: true
-  notify:
-    - Restart Grafana
+
+- name: Restart Grafana
+  ansible.builtin.service:
+    name: "grafana-server"
+    state: "restarted"
+    enabled: yes
+  become: yes
+
+- name: Wait until Grafana is up and running...
+  uri:
+    url: 'http://192.168.0.68:3000/api/health'
+    return_content: yes
+    validate_certs: no
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 24 # Retries for 24 * 5 seconds = 120 seconds = 2 minutes
+  delay: 15 # Every 5 seconds
+  register: uri_output
+
+- name: API test result
+  debug:
+    msg: "{{ uri_output }}"
 
 - name: Create Loki datasource
   community.grafana.grafana_datasource:
@@ -58,7 +78,7 @@
 
 - name: Create an organization
   community.grafana.grafana_organization:
-    url: "https://grafana.example.com"
+    url: "http://192.168.0.68:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
     name: "{{ org_name }}"

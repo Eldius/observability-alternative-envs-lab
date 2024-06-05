@@ -12,7 +12,9 @@ observability tools and approaches.
 
 ## Reference links ##
 
-- [OTEL Collector](https://opentelemetry.io/docs/collector/installation/#linux)
+- [OTEL Collector installation](https://opentelemetry.io/docs/collector/installation/#linux)
+- [OTEL Collector Agent mode configuration](https://opentelemetry.io/docs/collector/deployment/agent/)
+- [OTEL Collector Configuration structure](https://opentelemetry.io/docs/collector/configuration/)
 
 
 ## code snippets ##

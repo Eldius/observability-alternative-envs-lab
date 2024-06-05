@@ -1,0 +1,8 @@
+---
+# tasks file for otel_collector
+- name: Install Grafana package
+  ansible.builtin.apt:
+    deb: "{{ package_url }}"
+  become: true
+  # notify:
+  #   - Restart Collector
