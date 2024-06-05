@@ -1,4 +1,9 @@
 
+prepare:
+	ansible-playbook \
+		-i env/dev \
+		playbooks/prepare-playbook.yml
+
 loki:
 	ansible-playbook \
 		-i env/dev \
@@ -29,5 +34,5 @@ collector:
 		playbooks/collector-playbook.yml
 
 
-setup: loki jaeger prometheus grafana
+setup: prepare loki jaeger prometheus grafana
 	@echo "Setup finished!"

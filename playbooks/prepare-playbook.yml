@@ -1,0 +1,7 @@
+---
+- hosts: node1
+  tasks:
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      ansible.builtin.apt:
+        upgrade: dist
+      become: true
