@@ -4,3 +4,6 @@ grafana_version: 11.0.0
 package_url: "https://dl.grafana.com/oss/release/grafana_{{ grafana_version }}_arm64.deb"
 create_loki_datasource: false
 create_prometheus_datasource: false
+grafana_admin_user: admin
+grafana_admin_pass: 123Senha
+org_name: My Org

@@ -9,4 +9,4 @@
         url_password: 123Senha
         commit_message: Configuring logs dashboard
         overwrite: true
-        path: "{{ playbook_dir }}/../roles/grafana/files/dashboards/logs.json"
+        path: roles/grafana/files/dashboards/logs.json

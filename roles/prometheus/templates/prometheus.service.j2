@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus Service
+
+[Service]
+User=prometheus
+Group=prometheus
+WorkingDirectory={{ install_dir }}
+ExecStart={{ install_dir }}/prometheus
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

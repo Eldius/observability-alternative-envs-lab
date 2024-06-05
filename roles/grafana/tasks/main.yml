@@ -13,22 +13,6 @@
   notify:
     - Restart Grafana
 
-- name: Configure Loki datasource
-  ansible.builtin.copy:
-    src: ../files/datasources/loki.yaml
-    dest: /usr/share/grafana/conf/provisioning/datasources/loki.yaml
-  become: true
-  notify:
-    - Restart Grafana
-
-# - name: Configure Loki dashboard
-#   ansible.builtin.copy:
-#     src: ../files/dashboards/loki.json
-#     dest: /usr/share/grafana/conf/provisioning/dashboards/logs.json
-#   become: true
-#   notify:
-#     - Restart Grafana
-
 - name: Generate custom.ini file
   ansible.builtin.copy:
     src: ../files/conf/custom.ini
@@ -39,30 +23,55 @@
 
 - name: Create Loki datasource
   community.grafana.grafana_datasource:
-    name: Loki
+    name: Loki (default)
     ds_type: loki
     ds_url: http://localhost:3100
     url: http://192.168.0.68:3000
     access: proxy
+    state: present
+    uid: "cdea4da2-22c6-11ef-96be-00155d5e2a9d"
     tls_skip_verify: true
-    url_username: eldius
-    url_password: 123Senha
-  when: create_loki_datasource
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
 
-- name: Create Prometheus datasource
+- name: create prometheus datasource
   community.grafana.grafana_datasource:
-    name: Prometheus
+    name: Prometheus (default)
     ds_type: prometheus
     ds_url: http://localhost:9090
     access: proxy
+    uid: "d77b5686-22c6-11ef-867d-00155d5e2a9d"
     tls_skip_verify: true
-    additional_json_data:
-      httpMethod: POST
-      manageAlerts: true
-      prometheusType: Prometheus
-      prometheusVersion: 2.44.0
-      cacheLevel: 'High'
-      disableRecordingRules: false
-      incrementalQueryOverlapWindow: 10m
-    enforce_secure_data: true
-  when: create_prometheus_datasource
+    url: http://192.168.0.68:3000
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+    overwrite: true
+
+- name: Remove default organization
+  community.grafana.grafana_organization:
+    url: "https://grafana.example.com"
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+    name: "Default Org"
+    state: absent
+    overwrite: true
+
+- name: Create an organization
+  community.grafana.grafana_organization:
+    url: "https://grafana.example.com"
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+    name: "{{ org_name }}"
+    state: present
+    overwrite: true
+
+- name: Log dashboard
+  community.grafana.grafana_dashboard:
+    grafana_url: http://localhost:9090
+    grafana_admin_user: "{{ grafana_admin_user }}"
+    grafana_admin_password: "{{ grafana_admin_pass }}"
+    dashboard_id: 18702
+    org_name: "{{ org_name }}"
+    state: present
+    uid: "df31d896-22c6-11ef-8321-00155d5e2a9d"
+    overwrite: true
