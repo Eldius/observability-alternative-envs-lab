@@ -9,6 +9,7 @@
   ansible.builtin.apt:
     deb: "{{ package_url }}"
   become: true
+  register: install_task_res
 
 - name: Generate custom.ini file
   ansible.builtin.template:
@@ -17,13 +18,20 @@
     owner: grafana
     group: grafana
   become: true
+  register: ini_task_res
 
 - name: Restart Grafana
   ansible.builtin.service:
     name: "grafana-server"
     state: "restarted"
-    enabled: yes
-  become: yes
+    enabled: true
+  become: true
+  when: ini_task_res.changed or install_task_res.changed
+  register: restart_service_res
+
+- name: Debug 0
+  debug:
+    msg: "{{ restart_service_res }}"
 
 - name: Wait until Grafana is up and running...
   uri:
@@ -33,48 +41,21 @@
     status_code:
       - 200
   until: uri_output.status == 200
-  retries: 24 # Retries for 24 * 5 seconds = 120 seconds = 2 minutes
-  delay: 15 # Every 5 seconds
+  retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
+  delay: 15 # Every 15 seconds
   register: uri_output
 
 - name: API test result
   debug:
     msg: "{{ uri_output }}"
 
-- name: Create Loki datasource
-  community.grafana.grafana_datasource:
-    name: Loki (default)
-    ds_type: loki
-    ds_url: http://localhost:3100
-    url: http://192.168.0.68:3000
-    access: proxy
-    state: present
-    uid: "cdea4da2-22c6-11ef-96be-00155d5e2a9d"
-    tls_skip_verify: true
-    url_username: "{{ grafana_admin_user }}"
-    url_password: "{{ grafana_admin_pass }}"
-
-- name: create prometheus datasource
-  community.grafana.grafana_datasource:
-    name: Prometheus (default)
-    ds_type: prometheus
-    ds_url: http://localhost:9090
-    access: proxy
-    uid: "d77b5686-22c6-11ef-867d-00155d5e2a9d"
-    tls_skip_verify: true
-    url: http://192.168.0.68:3000
-    url_username: "{{ grafana_admin_user }}"
-    url_password: "{{ grafana_admin_pass }}"
-    overwrite: true
-
 - name: Remove default organization
   community.grafana.grafana_organization:
-    url: "https://grafana.example.com"
+    url: "http://192.168.0.68:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
     name: "Default Org"
     state: absent
-    overwrite: true
 
 - name: Create an organization
   community.grafana.grafana_organization:
@@ -83,15 +64,47 @@
     url_password: "{{ grafana_admin_pass }}"
     name: "{{ org_name }}"
     state: present
-    overwrite: true
+
+- name: Create Loki datasource
+  community.grafana.grafana_datasource:
+    name: Loki (default)
+    ds_type: loki
+    ds_url: http://192.168.0.68:3100
+    url: http://192.168.0.68:3000
+    access: proxy
+    state: present
+    uid: "cdea4da2-22c6-11ef-96be-00155d5e2a9e"
+    org_name: "{{ org_name }}"
+    tls_skip_verify: true
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+  register: loki_datasource
+
+- name: Debug 1
+  debug:
+    msg: "{{ loki_datasource }}"
+
+- name: Create prometheus datasource
+  community.grafana.grafana_datasource:
+    name: Prometheus (default)
+    ds_type: prometheus
+    ds_url: http://192.168.0.68:9090
+    access: proxy
+    uid: "d77b5686-22c6-11ef-867d-00155d5e2a9e"
+    org_name: "{{ org_name }}"
+    tls_skip_verify: true
+    url: http://192.168.0.68:3000
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
 
 - name: Log dashboard
   community.grafana.grafana_dashboard:
-    grafana_url: http://localhost:9090
-    grafana_admin_user: "{{ grafana_admin_user }}"
-    grafana_admin_password: "{{ grafana_admin_pass }}"
+    grafana_url: "http://192.168.0.68:3000"
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+    commit_message: "Updating log dashboard"
     dashboard_id: 18702
     org_name: "{{ org_name }}"
     state: present
-    uid: "df31d896-22c6-11ef-8321-00155d5e2a9d"
+    uid: "df31d896-22c6-11ef-8321-00155d5e2a9f"
     overwrite: true

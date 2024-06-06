@@ -1,8 +1,19 @@
 ---
 # tasks file for otel_collector
-- name: Install Grafana package
+- name: Install OTEL Collector package
   ansible.builtin.apt:
     deb: "{{ package_url }}"
   become: true
-  # notify:
-  #   - Restart Collector
+  notify:
+    - Restart Collector
+
+- name: Generate config.yaml file
+  ansible.builtin.template:
+    src: otelcol-config.yaml
+    dest: /etc/otelcol/config.yaml
+    owner: otel
+    group: otel
+  become: true
+  register: config_task_res
+  notify:
+    - Restart Collector
