@@ -1,0 +1,17 @@
+---
+- name: Uninstall Grafana package
+  ansible.builtin.apt:
+    name: grafana
+    state: absent
+  become: true
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/grafana
+    - /var/log/grafana
+    - /var/lib/grafana
+    - /lib/systemd/system/grafana-server.service
+  become: true

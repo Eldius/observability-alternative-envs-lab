@@ -4,5 +4,5 @@
   ansible.builtin.service:
     name: "prometheus"
     state: "restarted"
-    enabled: yes
-  become: yes
+    enabled: true
+  become: true

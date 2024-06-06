@@ -1,0 +1,33 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Remove OTEL Collector service
+  ansible.builtin.service:
+    name: otelcol
+    enabled: false
+    state: stopped
+  become: true
+  when: "'otelcol.service' in ansible_facts.services"
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ otelcol_install_dir }}"
+    - /lib/systemd/system/otelcol.service
+  become: true
+
+- name: Remove OTEL Collector system user
+  ansible.builtin.user:
+    name: otelcol
+    group: otelcol
+    state: absent
+  become: true
+
+- name: Remove OTEL Collector user group
+  ansible.builtin.group:
+    name: otelcol
+    state: absent
+  become: true

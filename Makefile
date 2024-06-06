@@ -4,6 +4,12 @@ prepare:
 		-i env/dev \
 		playbooks/prepare-playbook.yml
 
+clean:
+	ansible-playbook \
+		-i env/dev \
+		-e "uninstall_grafana=false" \
+		playbooks/clean-playbook.yml
+
 loki:
 	ansible-playbook \
 		-i env/dev \
@@ -34,5 +40,5 @@ collector:
 		playbooks/collector-playbook.yml
 
 
-setup: prepare loki jaeger prometheus grafana
+setup: prepare loki jaeger prometheus grafana collector
 	@echo "Setup finished!"

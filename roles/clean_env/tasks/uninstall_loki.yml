@@ -1,0 +1,32 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Remove Loki service
+  ansible.builtin.service:
+    name: loki
+    enabled: false
+    state: stopped
+  become: true
+  when: "'loki.service' in ansible_facts.services"
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ loki_install_dir }}"
+    - "/etc/systemd/system/loki.service"
+  become: true
+
+- name: Remove Loki system user
+  ansible.builtin.user:
+    name: loki
+    state: absent
+  become: true
+
+- name: Remove Loki user group
+  ansible.builtin.group:
+    name: loki
+    state: absent
+  become: true

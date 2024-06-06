@@ -1,0 +1,33 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Remove Prometheus service
+  ansible.builtin.service:
+    name: prometheus
+    state: stopped
+  become: true
+  when: "'prometheus.service' in ansible_facts.services"
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ prometheus_install_dir }}"
+    - /etc/systemd/system/prometheus.service
+  become: true
+
+- name: Remove Prometheus system user
+  ansible.builtin.user:
+    name: prometheus
+    comment: Prometheus service user
+    group: prometheus
+    state: absent
+  become: true
+
+- name: Remove Prometheus user group
+  ansible.builtin.group:
+    name: prometheus
+    state: absent
+  become: true

@@ -46,7 +46,7 @@
 - name: Create service definition file
   ansible.builtin.template:
     src: prometheus.yaml
-    dest: /usr/local/prometheus/prometheus.yml
+    dest: "{{ install_dir }}/prometheus.yml"
     owner: prometheus
     group: prometheus
   become: true

@@ -1,0 +1,32 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Remove Jaeger service
+  ansible.builtin.service:
+    name: jaeger
+    enabled: false
+    state: stopped
+  become: true
+  when: "'jaeger.service' in ansible_facts.services"
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ jaeger_install_dir }}"
+    - "/etc/systemd/system/jaeger.service"
+  become: true
+
+- name: Remove Jaeger system user
+  ansible.builtin.user:
+    name: jaeger
+    state: absent
+  become: true
+
+- name: Remove Jaeger user group
+  ansible.builtin.group:
+    name: jaeger
+    state: absent
+  become: true

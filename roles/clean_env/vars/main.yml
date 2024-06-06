@@ -1,0 +1,11 @@
+---
+# vars file for clean_env
+uninstall_grafana: true
+uninstall_prometheus: true
+uninstall_otelcol: true
+uninstall_loki: true
+uninstall_jaeger: true
+prometheus_install_dir: /usr/local/prometheus
+otelcol_install_dir: /etc/otelcol
+loki_install_dir: /usr/local/loki
+jaeger_install_dir: /usr/local/jaeger

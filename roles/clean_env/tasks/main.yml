@@ -1,0 +1,21 @@
+---
+# tasks file for clean_env
+- name: Uninstall Grafana
+  ansible.builtin.import_tasks: uninstall_grafana.yml
+  when: "uninstall_grafana"
+
+- name: Uninstall Prometheus
+  ansible.builtin.import_tasks: uninstall_prometheus.yml
+  when: "uninstall_prometheus"
+
+- name: Uninstall Loki
+  ansible.builtin.import_tasks: uninstall_loki.yml
+  when: "uninstall_loki"
+
+- name: Uninstall OTEL Collector
+  ansible.builtin.import_tasks: uninstall_otelcol.yml
+  when: "uninstall_otelcol"
+
+- name: Uninstall Jaeger
+  ansible.builtin.import_tasks: uninstall_jaeger.yml
+  when: "uninstall_jaeger"
