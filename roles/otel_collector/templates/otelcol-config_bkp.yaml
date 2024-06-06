@@ -41,12 +41,12 @@ service:
 exporters:
   debug:
   otlp/data-prepper/traces:
-    endpoint: http://192.169.0.68:21890
+    endpoint: http://data-prepper:21890
     tls:
       insecure: true
       insecure_skip_verify: true
   otlp/data-prepper/metrics:
-    endpoint: http://192.169.0.68:21891
+    endpoint: http://data-prepper:21891
     tls:
       insecure: true
       insecure_skip_verify: true

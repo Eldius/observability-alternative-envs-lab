@@ -9,7 +9,7 @@
 
 - name: Generate config.yaml file
   ansible.builtin.template:
-    src: otelcol-config.yaml
+    src: config.yaml
     dest: /etc/otelcol/config.yaml
     owner: otel
     group: otel
