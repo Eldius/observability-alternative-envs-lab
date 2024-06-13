@@ -8,7 +8,7 @@ prepare:
 
 clean:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		-e "uninstall_grafana=false" \
 		playbooks/clean-playbook.yml
 
