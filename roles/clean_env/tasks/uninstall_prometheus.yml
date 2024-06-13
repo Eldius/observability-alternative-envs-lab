@@ -6,6 +6,7 @@
   ansible.builtin.service:
     name: prometheus
     state: stopped
+    daemon_reload: true
   become: true
   when: "'prometheus.service' in ansible_facts.services"
 

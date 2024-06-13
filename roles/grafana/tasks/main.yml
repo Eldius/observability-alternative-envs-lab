@@ -4,7 +4,6 @@
   debug:
     msg: "{{ ansible_architecture }}"
 
-
 - name: Install Grafana package
   ansible.builtin.apt:
     deb: "{{ package_url }}"
@@ -14,25 +13,32 @@
 - name: Generate custom.ini file
   ansible.builtin.template:
     src: grafana.ini
-    # dest: /etc/grafana/grafana.ini
-    dest: /etc/grafana/custom.ini
+    dest: /etc/grafana/grafana.ini
     owner: grafana
     group: grafana
   become: true
   register: ini_task_res
 
-- name: Restart Grafana
-  ansible.builtin.service:
-    name: "grafana-server"
-    state: "restarted"
-    enabled: true
+- name: Generate custom.ini file
+  ansible.builtin.template:
+    dest: /var/lib/grafana/grafana.db
+    state: absent
   become: true
   when: ini_task_res.changed or install_task_res.changed
-  register: restart_service_res
 
-- name: Debug 0
-  debug:
-    msg: "{{ restart_service_res }}"
+- name: Restart Grafana
+  block:
+    - name: Enable service
+      ansible.builtin.service:
+        name: "grafana-server"
+        enabled: true
+        daemon_reload: true
+    - name: Restart service
+      ansible.builtin.service:
+        name: "grafana-server"
+        state: "restarted"
+  become: true
+  when: ini_task_res.changed or install_task_res.changed
 
 - name: Wait until Grafana is up and running...
   uri:
@@ -49,6 +55,12 @@
 - name: API test result
   debug:
     msg: "{{ uri_output }}"
+
+- name: Debug
+  debug:
+    msg:
+      url_username: "{{ grafana_admin_user }}"
+      url_password: "{{ grafana_admin_pass }}"
 
 - name: Remove default organization
   community.grafana.grafana_organization:

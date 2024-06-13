@@ -3,6 +3,7 @@
   ansible.builtin.apt:
     name: grafana
     state: absent
+    autoremove: true
   become: true
 
 - name: Clear data and configuration
