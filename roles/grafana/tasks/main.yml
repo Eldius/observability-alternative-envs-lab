@@ -14,7 +14,8 @@
 - name: Generate custom.ini file
   ansible.builtin.template:
     src: grafana.ini
-    dest: /etc/grafana/grafana.ini
+    # dest: /etc/grafana/grafana.ini
+    dest: /etc/grafana/custom.ini
     owner: grafana
     group: grafana
   become: true
@@ -35,7 +36,7 @@
 
 - name: Wait until Grafana is up and running...
   uri:
-    url: 'http://192.168.0.68:3000/api/health'
+    url: 'http://{{ ansible_default_ipv4.address }}:3000/api/health'
     return_content: yes
     validate_certs: no
     status_code:
@@ -51,15 +52,16 @@
 
 - name: Remove default organization
   community.grafana.grafana_organization:
-    url: "http://192.168.0.68:3000"
+    url: "http://{{ ansible_default_ipv4.address }}:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
     name: "Default Org"
     state: absent
+  ignore_errors: true
 
 - name: Create an organization
   community.grafana.grafana_organization:
-    url: "http://192.168.0.68:3000"
+    url: "http://{{ ansible_default_ipv4.address }}:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
     name: "{{ org_name }}"
@@ -69,8 +71,8 @@
   community.grafana.grafana_datasource:
     name: Loki (default)
     ds_type: loki
-    ds_url: http://192.168.0.68:3100
-    url: http://192.168.0.68:3000
+    ds_url: http://{{ ansible_default_ipv4.address }}:3100
+    url: http://{{ ansible_default_ipv4.address }}:3000
     access: proxy
     state: present
     uid: "cdea4da2-22c6-11ef-96be-00155d5e2a9e"
@@ -88,18 +90,18 @@
   community.grafana.grafana_datasource:
     name: Prometheus (default)
     ds_type: prometheus
-    ds_url: http://192.168.0.68:9090
+    ds_url: "http://{{ ansible_default_ipv4.address }}:9090"
     access: proxy
     uid: "d77b5686-22c6-11ef-867d-00155d5e2a9e"
     org_name: "{{ org_name }}"
     tls_skip_verify: true
-    url: http://192.168.0.68:3000
+    url: "http://{{ ansible_default_ipv4.address }}:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
 
 - name: Log dashboard
   community.grafana.grafana_dashboard:
-    grafana_url: "http://192.168.0.68:3000"
+    grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
     commit_message: "Updating log dashboard"

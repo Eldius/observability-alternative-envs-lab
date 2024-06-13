@@ -1,7 +1,9 @@
 
+ENV_NAME ?= dev
+
 prepare:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		playbooks/prepare-playbook.yml
 
 clean:
@@ -12,31 +14,31 @@ clean:
 
 loki:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		playbooks/loki-playbook.yml
 
 
 grafana:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		playbooks/grafana-playbook.yml
 
 
 prometheus:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		playbooks/prometheus-playbook.yml
 
 
 jaeger:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		playbooks/jaeger-playbook.yml
 
 
 collector:
 	ansible-playbook \
-		-i env/dev \
+		-i env/$(ENV_NAME) \
 		playbooks/collector-playbook.yml
 
 
