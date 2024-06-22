@@ -41,5 +41,11 @@ collector:
 		playbooks/collector-playbook.yml
 
 
-setup: prepare loki jaeger prometheus grafana collector
+tempo:
+	ansible-playbook \
+		-i env/$(ENV_NAME) \
+		playbooks/tempo-playbook.yml
+
+
+setup: prepare loki jaeger prometheus tempo grafana collector
 	@echo "Setup finished!"

@@ -1,0 +1,5 @@
+---
+# vars file for grafana_tempo
+
+grafana_tempo_version: 2.5.0
+package_url: "https://github.com/grafana/tempo/releases/download/v{{ grafana_tempo_version }}/tempo_{{ grafana_tempo_version }}_linux_arm64.deb"

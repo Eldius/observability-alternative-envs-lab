@@ -2,6 +2,12 @@
 - name: Populate service facts
   ansible.builtin.service_facts:
 
+- name: Debug
+  debug:
+    msg:
+      # services: "{{ ansible_facts.services }}"
+      exists: "{{ 'prometheus.service' in ansible_facts.services }}"
+
 - name: Remove Prometheus service
   ansible.builtin.service:
     name: prometheus

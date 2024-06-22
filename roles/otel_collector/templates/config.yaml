@@ -22,13 +22,18 @@ exporters:
     # endpoint: "0.0.0.0:9089"
   prometheusremotewrite:
     endpoint: http://{{ ansible_default_ipv4.address }}:9090
+  otlp/tempo:
+    endpoint: {{ ansible_default_ipv4.address }}:5317
+    tls:
+      insecure: true
+      insecure_skip_verify: true
 
 service:
   pipelines:
     traces/dev:
       receivers: [otlp/traces]
       processors: [batch]
-      exporters: [otlp/jaeger]
+      exporters: [otlp/jaeger, otlp/tempo]
     metrics/prod:
       receivers: [otlp/metrics]
       processors: [batch]

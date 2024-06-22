@@ -1,0 +1,16 @@
+---
+- name: Uninstall Grafana package
+  ansible.builtin.apt:
+    name: tempo
+    state: absent
+    autoremove: true
+  become: true
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/tempo
+    - /var/tempo
+  become: true

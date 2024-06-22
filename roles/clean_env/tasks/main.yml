@@ -19,3 +19,13 @@
 - name: Uninstall Jaeger
   ansible.builtin.import_tasks: uninstall_jaeger.yml
   when: "uninstall_jaeger"
+
+
+- name: Uninstall Grafana Tempo
+  ansible.builtin.import_tasks: uninstall_tempo.yml
+  when: "uninstall_tempo"
+
+- name: Reboot server
+  ansible.builtin.reboot:
+    reboot_timeout: 3600
+  become: true

@@ -10,7 +10,7 @@
   become: true
   register: install_task_res
 
-- name: Generate custom.ini file
+- name: Generate grafana.ini file
   ansible.builtin.template:
     src: grafana.ini
     dest: /etc/grafana/grafana.ini
@@ -20,8 +20,8 @@
   register: ini_task_res
 
 - name: Generate custom.ini file
-  ansible.builtin.template:
-    dest: /var/lib/grafana/grafana.db
+  ansible.builtin.file:
+    path: /var/lib/grafana/grafana.db
     state: absent
   become: true
   when: ini_task_res.changed or install_task_res.changed
@@ -55,12 +55,6 @@
 - name: API test result
   debug:
     msg: "{{ uri_output }}"
-
-- name: Debug
-  debug:
-    msg:
-      url_username: "{{ grafana_admin_user }}"
-      url_password: "{{ grafana_admin_pass }}"
 
 - name: Remove default organization
   community.grafana.grafana_organization:
@@ -111,6 +105,25 @@
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
 
+- name: Create Tempo datasource
+  community.grafana.grafana_datasource:
+    name: "tempo"
+    url: http://{{ ansible_default_ipv4.address }}:3000
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+    org_name: "{{ org_name }}"
+    ds_type: tempo
+    ds_url: http://{{ ansible_default_ipv4.address }}:3200
+    uid: "1b073e0c-30bd-11ef-a9b9-00155dc7a883"
+    access: proxy
+    state: present
+    tls_skip_verify: true
+  register: tempo_datasource
+
+- name: Debug 2
+  debug:
+    msg: "{{ tempo_datasource }}"
+
 - name: Log dashboard
   community.grafana.grafana_dashboard:
     grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
@@ -121,4 +134,16 @@
     org_name: "{{ org_name }}"
     state: present
     uid: "df31d896-22c6-11ef-8321-00155d5e2a9f"
+    overwrite: true
+
+- name: Trace dashboard
+  community.grafana.grafana_dashboard:
+    grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_pass }}"
+    commit_message: "Configuring trace dashboard"
+    dashboard_id: 20600
+    org_name: "{{ org_name }}"
+    state: present
+    uid: "801d24fa-30bd-11ef-adbc-00155dc7a883"
     overwrite: true

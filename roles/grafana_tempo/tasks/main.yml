@@ -1,0 +1,54 @@
+---
+# tasks file for grafana_tempo
+
+- name: Install Grafana Tempo package
+  ansible.builtin.apt:
+    deb: "{{ package_url }}"
+  become: true
+  register: install_task_res
+
+- name: Generate config.yml file
+  ansible.builtin.template:
+    src: config.yaml
+    dest: /etc/tempo/config.yml
+    owner: tempo
+  become: true
+  register: config_file_task_res
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /var/tempo
+    state: directory
+    owner: tempo
+  become: true
+
+- name: Restart Grafana Tempo
+  block:
+    - name: Enable service
+      ansible.builtin.service:
+        name: "tempo"
+        enabled: true
+        daemon_reload: true
+    - name: Restart service
+      ansible.builtin.service:
+        name: "tempo"
+        state: "restarted"
+  become: true
+  when: config_file_task_res.changed or install_task_res.changed
+
+- name: Wait until Grafana Tempo is up and running...
+  uri:
+    url: 'http://{{ ansible_default_ipv4.address }}:3200/ready'
+    return_content: yes
+    validate_certs: no
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
+  delay: 15 # Every 15 seconds
+  register: uri_output
+
+- name: API test result
+  debug:
+    msg: "{{ uri_output }}"
+
