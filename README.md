@@ -6,8 +6,12 @@ observability tools and approaches.
 
 ## Ports by service ##
 
-- `Jaeger`: 16686
-- `Loki Query Interface`: 3100
+- `Jaeger`:
+  - `Web Interface`: 16686
+- `Loki`:
+  - `Query Interface`: 3100
+- `Grafana`:
+  - `Web Interface`: 3000
 
 
 ## Reference links ##
