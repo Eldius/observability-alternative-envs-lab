@@ -47,5 +47,8 @@ tempo:
 		playbooks/tempo-playbook.yml
 
 
-setup: prepare loki jaeger prometheus tempo grafana collector
+setup:
+	ansible-playbook \
+		-i env/$(ENV_NAME) \
+		playbooks/reinstall-playbook.yml
 	@echo "Setup finished!"

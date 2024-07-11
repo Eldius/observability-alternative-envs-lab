@@ -1,0 +1,20 @@
+---
+# tasks file for prepare_so
+- name: Upgrade the OS (apt-get dist-upgrade)
+  ansible.builtin.apt:
+    upgrade: dist
+  become: true
+
+- name: Install a list of packages
+  ansible.builtin.apt:
+    pkg:
+    - curl
+    - wget
+    - git
+    - vim
+    update_cache: yes
+  become: true
+
+- name: Unconditionally reboot the machine with all defaults
+  ansible.builtin.reboot:
+  become: true

@@ -1,7 +1,4 @@
 ---
 - hosts: all
-  tasks:
-    - name: Upgrade the OS (apt-get dist-upgrade)
-      ansible.builtin.apt:
-        upgrade: dist
-      become: true
+  roles:
+    - role: "roles/prepare_so"
