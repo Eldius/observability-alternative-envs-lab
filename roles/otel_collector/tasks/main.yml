@@ -7,6 +7,17 @@
   notify:
     - Restart Collector
 
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: otel
+    group: otel
+  become: true
+  loop:
+    - "/etc/otelcol"
+
+
 - name: Generate config.yaml file
   ansible.builtin.template:
     src: config.yaml
