@@ -18,8 +18,6 @@ exporters:
     tls:
       insecure: true
       insecure_skip_verify: true
-  # prometheus:
-    # endpoint: "0.0.0.0:9089"
   prometheusremotewrite:
     endpoint: http://{{ ansible_default_ipv4.address }}:9090
   otlp/tempo:
