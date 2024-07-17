@@ -28,3 +28,19 @@
   register: config_task_res
   notify:
     - Restart Collector
+
+# - name: Wait until OTEL Collector is up and running...
+#   uri:
+#     url: 'http://{{ ansible_default_ipv4.address }}:3100/ready'
+#     return_content: yes
+#     validate_certs: no
+#     status_code:
+#       - 200
+#   until: uri_output.status == 200
+#   retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
+#   delay: 15 # Every 15 seconds
+#   register: uri_output
+
+# - name: API test result
+#   debug:
+#     msg: "{{ uri_output }}"

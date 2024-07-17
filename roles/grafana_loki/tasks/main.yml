@@ -34,21 +34,6 @@
   notify:
     - Restart Loki
 
-
-# - name: Unpack Loki bin package
-#   ansible.builtin.unarchive:
-#     src: "{{ download_url }}"
-#     dest: "{{ install_dir }}"
-#     mode: '0755'
-#     owner: loki
-#     remote_src: true
-#     # extra_opts:
-#     #   - '--strip-components=1'
-#     #   - '--show-stored-names'
-#   become: true
-#   notify:
-#     - Restart Loki
-
 - name: Install a Grafana Loki package
   ansible.builtin.apt:
     deb: "{{ package_url }}"
@@ -73,3 +58,19 @@
   become: true
   notify:
     - Restart Loki
+
+# - name: Wait until Grafana Tempo is up and running...
+#   uri:
+#     url: 'http://{{ ansible_default_ipv4.address }}:3100/ready
+#     return_content: yes
+#     validate_certs: no
+#     status_code:
+#       - 200
+#   until: uri_output.status == 200
+#   retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
+#   delay: 15 # Every 15 seconds
+#   register: uri_output
+
+# - name: API test result
+#   debug:
+#     msg: "{{ uri_output }}"
