@@ -6,8 +6,8 @@ User=loki
 Group=loki
 WorkingDirectory={{ install_dir }}
 ExecStart=/usr/bin/loki -config.file={{ install_dir }}/conf/local-config.yaml
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

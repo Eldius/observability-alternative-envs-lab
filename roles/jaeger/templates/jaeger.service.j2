@@ -6,8 +6,8 @@ User=jaeger
 Group=jaeger
 WorkingDirectory={{ install_dir }}
 ExecStart={{ install_dir }}/jaeger-all-in-one
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

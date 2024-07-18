@@ -5,9 +5,11 @@ Description=Prometheus Service
 User=prometheus
 Group=prometheus
 WorkingDirectory={{ install_dir }}
-ExecStart={{ install_dir }}/prometheus {% if remote_write_enabled %}-web.enable-remote-write-receiver{% endif %}
-StandardOutput=syslog
-StandardError=syslog
+ExecStart={{ install_dir }}/prometheus {% if remote_write_enabled %} --web.enable-remote-write-receiver {% endif %}
+
+
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
