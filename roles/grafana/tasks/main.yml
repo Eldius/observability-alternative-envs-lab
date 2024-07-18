@@ -124,26 +124,59 @@
   debug:
     msg: "{{ tempo_datasource }}"
 
-- name: Log dashboard
-  community.grafana.grafana_dashboard:
-    grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
-    url_username: "{{ grafana_admin_user }}"
-    url_password: "{{ grafana_admin_pass }}"
-    commit_message: "Updating log dashboard"
-    dashboard_id: 18702
-    org_name: "{{ org_name }}"
-    state: present
-    uid: "df31d896-22c6-11ef-8321-00155d5e2a9f"
-    overwrite: true
+# - name: Log dashboard
+#   community.grafana.grafana_dashboard:
+#     grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
+#     url_username: "{{ grafana_admin_user }}"
+#     url_password: "{{ grafana_admin_pass }}"
+#     commit_message: "Updating log dashboard"
+#     dashboard_id: 18702
+#     org_name: "{{ org_name }}"
+#     state: present
+#     uid: "df31d896-22c6-11ef-8321-00155d5e2a9f"
+#     overwrite: true
 
-- name: Trace dashboard
+# - name: Trace dashboard
+#   community.grafana.grafana_dashboard:
+#     grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
+#     url_username: "{{ grafana_admin_user }}"
+#     url_password: "{{ grafana_admin_pass }}"
+#     commit_message: "Configuring trace dashboard"
+#     dashboard_id: 20600
+#     org_name: "{{ org_name }}"
+#     state: present
+#     uid: "801d24fa-30bd-11ef-adbc-00155dc7a883"
+#     overwrite: true
+
+- name: Find dashboard files
+  find:
+    paths: "{{role_path}}/files/dashboards"
+    file_type: file
+    recurse: Yes
+    patterns: "*.json"
+  register: dashboard_files
+  delegate_to: localhost
+  run_once: true
+
+- name: Testing role path
+  debug:
+    msg:
+      name_parsed: "{{role_path|basename}}"
+      name: "{{role_name}}"
+      path: "{{role_path}}"
+      files: "{{dashboard_files.files}}"
+
+- name: Dashboards
   community.grafana.grafana_dashboard:
     grafana_url: "http://{{ ansible_default_ipv4.address }}:3000"
     url_username: "{{ grafana_admin_user }}"
     url_password: "{{ grafana_admin_pass }}"
-    commit_message: "Configuring trace dashboard"
-    dashboard_id: 20600
+    commit_message: "Creating new dashboard {{ item }}"
+    path: "{{ item.path }}"
     org_name: "{{ org_name }}"
     state: present
-    uid: "801d24fa-30bd-11ef-adbc-00155dc7a883"
+    uid: "{{ item.path | to_uuid }}"
     overwrite: true
+  delegate_to: localhost
+  run_once: true
+  loop: "{{ dashboard_files.files }}"

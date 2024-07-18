@@ -50,7 +50,7 @@
             "uid": "cdea4da2-22c6-11ef-96be-00155d5e2a9e"
           },
           "editorMode": "builder",
-          "expr": "{service_name=~\"service_a\"} |= `$log_filter` | json | __error__=``",
+          "expr": "{service_name=~\"$service_name\"} |= `$log_filter` | json | json | __error__=``",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A"
@@ -84,11 +84,37 @@
         "query": "",
         "skipUrlSync": false,
         "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "service_a",
+          "value": "service_a"
+        },
+        "definition": "",
+        "description": "Sewrvice name",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Sewrvice name",
+        "multi": false,
+        "name": "service_name",
+        "options": [],
+        "query": {
+          "label": "service_name",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timeRangeUpdatedDuringEditOrView": false,
@@ -96,6 +122,6 @@
   "timezone": "browser",
   "title": "Logs Dashboard",
   "uid": "dds2jkwg4zsowf",
-  "version": 9,
+  "version": 12,
   "weekStart": ""
 }
