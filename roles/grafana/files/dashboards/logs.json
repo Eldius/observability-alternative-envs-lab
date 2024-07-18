@@ -18,16 +18,16 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 4,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "cdea4da2-22c6-11ef-96be-00155d5e2a9e"
       },
       "gridPos": {
-        "h": 20,
+        "h": 14,
         "w": 24,
         "x": 0,
         "y": 0
@@ -36,43 +36,66 @@
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
-        "prettifyLogMessage": true,
+        "prettifyLogMessage": false,
         "showCommonLabels": true,
         "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
-        "wrapLogMessage": false
+        "wrapLogMessage": true
       },
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "cdea4da2-22c6-11ef-96be-00155d5e2a9e"
           },
-          "editorMode": "code",
-          "expr": "{cluster=\"compose\"} |= `` | json",
-          "key": "Q-2da329a4-b2c8-4fee-a90a-a58e2f184ed4-0",
+          "editorMode": "builder",
+          "expr": "{service_name=~\"service_a\"} |= `$log_filter` | json | __error__=``",
+          "legendFormat": "",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "My Apps logs",
+      "title": "Logs",
       "type": "logs"
     }
   ],
   "schemaVersion": 39,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "description": "Log Filter",
+        "hide": 1,
+        "label": "Log Filter",
+        "name": "log_filter",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-6h",
     "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {},
   "timezone": "browser",
-  "title": "Apps Logs",
-  "uid": "ddnas6qghdybkf",
-  "version": 1,
+  "title": "Logs Dashboard",
+  "uid": "dds2jkwg4zsowf",
+  "version": 9,
   "weekStart": ""
 }
