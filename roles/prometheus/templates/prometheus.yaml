@@ -21,8 +21,11 @@ rule_files:
 scrape_configs:
   - job_name: "prometheus"
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ["{{ ansible_default_ipv4.address }}:9090"]
 
   - job_name: "otelcol"
     static_configs:
-      - targets: ["localhost:9089"]
+      - targets: ["{{ ansible_default_ipv4.address }}:9089"]
+
+remote_write:
+  - url: http://{{ ansible_default_ipv4.address }}:9009/api/v1/push

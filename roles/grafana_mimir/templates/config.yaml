@@ -1,0 +1,46 @@
+---
+# Do not use this configuration in production.
+# It is for demonstration purposes only.
+multitenancy_enabled: false
+
+blocks_storage:
+  backend: filesystem
+  bucket_store:
+    sync_dir: "{{ data_dir }}/tsdb-sync"
+  filesystem:
+    dir: "{{ data_dir }}/data/tsdb"
+  tsdb:
+    dir: "{{ data_dir }}/tsdb"
+
+compactor:
+  data_dir: "{{ data_dir }}/compactor"
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+distributor:
+  ring:
+    instance_addr: 127.0.0.1:8888
+    kvstore:
+      store: memberlist
+
+ingester:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+
+ruler_storage:
+  backend: filesystem
+  filesystem:
+    dir: "{{ data_dir }}/rules"
+
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9008
+  log_level: error
+
+store_gateway:
+  sharding_ring:
+    replication_factor: 1

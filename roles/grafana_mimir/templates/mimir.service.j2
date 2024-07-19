@@ -1,0 +1,15 @@
+[Unit]
+Description=Mimir Service
+
+[Service]
+User=mimir
+Group=mimir
+WorkingDirectory={{ install_dir }}
+
+ExecStart={{ install_dir }}/mimir --config.file={{ install_dir }}/config/config.yml
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

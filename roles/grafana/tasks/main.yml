@@ -96,7 +96,7 @@
   community.grafana.grafana_datasource:
     name: Prometheus (default)
     ds_type: prometheus
-    ds_url: "http://{{ ansible_default_ipv4.address }}:9090"
+    ds_url: "http://{{ ansible_default_ipv4.address }}:9009/prometheus"
     access: proxy
     uid: "d77b5686-22c6-11ef-867d-00155d5e2a9e"
     org_name: "{{ org_name }}"

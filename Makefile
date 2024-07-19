@@ -47,6 +47,12 @@ tempo:
 		playbooks/tempo-playbook.yml
 
 
+mimir:
+	ansible-playbook \
+		-i env/$(ENV_NAME) \
+		playbooks/mimir-playbook.yml
+
+
 setup:
 	ansible-playbook \
 		-i env/$(ENV_NAME) \

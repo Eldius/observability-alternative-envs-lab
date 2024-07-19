@@ -1,0 +1,87 @@
+---
+# tasks file for grafana_mimir
+- name: Create Grafana Mimir user group
+  ansible.builtin.group:
+    name: mimir
+    state: present
+  become: true
+  register: user_group_task_res
+
+- name: Create Grafana Mimir system user
+  ansible.builtin.user:
+    name: mimir
+    comment: Grafana Mimir service user
+    group: mimir
+    state: present
+    system : true
+  become: true
+  register: user_task_res
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: mimir
+    group: mimir
+  become: true
+  loop:
+    - "{{ install_dir }}/config"
+    - "{{ data_dir }}/tsdb-sync"
+    - "{{ data_dir }}/data/tsdb"
+    - "{{ data_dir }}/tsdb"
+    - "{{ data_dir }}/compactor"
+    - "{{ data_dir }}/rules"
+  register: directories_task_res
+
+- name: Download Grafana Mimir bin file
+  ansible.builtin.get_url:
+    url: "{{ download_url }}"
+    dest: "{{ install_dir }}/mimir"
+    mode: '0755'
+    owner: mimir
+    group: mimir
+  become: true
+  register: download_task_res
+
+- name: Generate config.yml file
+  ansible.builtin.template:
+    src: config.yaml
+    dest: "{{ install_dir }}/config/config.yml"
+    owner: mimir
+    group: mimir
+  become: true
+  register: config_file_task_res
+
+- name: Create service definition file
+  ansible.builtin.template:
+    src: mimir.service.j2
+    dest: /etc/systemd/system/mimir.service
+    owner: root
+    group: root
+  become: true
+  register: service_file_task_res
+
+- name: Should restart service
+  set_fact:
+    restart_service: "{{user_group_task_res.changed or user_task_res.changed or directories_task_res.changed or download_task_res.changed or config_file_task_res.changed or service_file_task_res.changed}}"
+
+- name: Debug tasks
+  debug:
+    msg:
+      user_group_task_res: "{{user_group_task_res.changed}}"
+      user_task_res: "{{user_task_res.changed}}"
+      directories_task_res: "{{directories_task_res.changed}}"
+      download_task_res: "{{download_task_res.changed}}"
+      config_file_task_res: "{{config_file_task_res.changed}}"
+      service_file_task_res: "{{service_file_task_res.changed}}"
+      restart_service: "{{restart_service}}"
+
+- name: Restart Service
+  ansible.builtin.service:
+    name: "mimir"
+    state: "restarted"
+    daemon_reload: true
+    enabled: true
+  become: true
+  when: "{{restart_service}}"

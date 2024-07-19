@@ -18,31 +18,13 @@ exporters:
     tls:
       insecure: true
       insecure_skip_verify: true
-  # prometheusremotewrite:
-  #   endpoint: http://{{ ansible_default_ipv4.address }}:9090
-  #   tls:
-  #     insecure: true
-  #     insecure_skip_verify: true
-  #   resource_to_telemetry_conversion:
-  #     enabled: false # Convert resource attributes to metric labels
-  # prometheus:
-  #   endpoint: {{ ansible_default_ipv4.address }}:9089
-  #   namespace: otelmetrics
-  #   send_timestamps: true
-  #   metric_expiration: 180m
-  #   enable_open_metrics: true
-  #   add_metric_suffixes: false
-  #   resource_to_telemetry_conversion:
-  #     enabled: true
-  prometheus:
-    endpoint: "{{ ansible_default_ipv4.address }}:9089"
-    namespace: applications
-    send_timestamps: true
-    metric_expiration: 180m
-    enable_open_metrics: true
-    add_metric_suffixes: false
+  prometheusremotewrite:
+    endpoint: http://{{ ansible_default_ipv4.address }}:9009/api/v1/push
+    tls:
+      insecure: true
+      insecure_skip_verify: true
     resource_to_telemetry_conversion:
-      enabled: true
+      enabled: false # Convert resource attributes to metric labels
   otlp/tempo:
     endpoint: {{ ansible_default_ipv4.address }}:5317
     tls:
@@ -58,9 +40,7 @@ service:
     metrics/otlp:
       receivers: [otlp/metrics]
       processors: [batch]
-      exporters: [prometheus]
-      # exporters: [prometheus,prometheusremotewrite]
-      # exporters: [prometheus]
+      exporters: [prometheusremotewrite]
   extensions: [health_check, pprof, zpages]
 
 extensions:
