@@ -9,7 +9,17 @@ all:
         - otel-collector
         - jaeger
         - observability
+        - rpi4
       var_hostname: k8snode1
+    opensearch:
+      ansible_host: 192.168.0.42
+      tags:
+        - opensearch
+        - opensearch_dashboards
+        - data_prepper
+        - observability
+        - rpi5
+      var_hostname: k8snode3
   children:
     observability:
       hosts:

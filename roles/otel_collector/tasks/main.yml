@@ -6,6 +6,7 @@
   become: true
   notify:
     - Restart Collector
+  register: package_install_res
 
 - name: Create directories
   ansible.builtin.file:
@@ -14,6 +15,7 @@
     owner: otel
     group: otel
   become: true
+  register: folders_creation_res
   loop:
     - "/etc/otelcol"
 
@@ -29,18 +31,26 @@
   notify:
     - Restart Collector
 
-# - name: Wait until OTEL Collector is up and running...
-#   uri:
-#     url: 'http://{{ ansible_default_ipv4.address }}:3100/ready'
-#     return_content: yes
-#     validate_certs: no
-#     status_code:
-#       - 200
-#   until: uri_output.status == 200
-#   retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
-#   delay: 15 # Every 15 seconds
-#   register: uri_output
+- name: Restart Collector
+  ansible.builtin.service:
+    name: "otelcol"
+    state: "restarted"
+    enabled: true
+  when: config_task_res.changed or folders_creation_res.changed or package_install_res.changed
+  become: true
 
-# - name: API test result
-#   debug:
-#     msg: "{{ uri_output }}"
+- name: Wait until OTEL Collector is up and running...
+  uri:
+    url: 'http://{{ ansible_default_ipv4.address }}:3100/ready'
+    return_content: yes
+    validate_certs: no
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
+  delay: 15 # Every 15 seconds
+  register: uri_output
+
+- name: API test result
+  debug:
+    msg: "{{ uri_output }}"
