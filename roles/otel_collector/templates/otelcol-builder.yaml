@@ -1,0 +1,28 @@
+---
+dist:
+  name: otelcol
+  description: Local OpenTelemetry Collector binary
+  output_path: /tmp/dist
+exporters:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v{{ collector_version }}
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/go.opentelemetry.io/collector/receiver/otlpreceiver v{{ collector_version }}
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v{{ collector_version }}
+
+receivers:
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v{{ collector_version }}
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/fluentforwardreceiver v{{ collector_version }}
+
+processors:
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v{{ collector_version }}
+
+providers:
+  - gomod: go.opentelemetry.io/collector/confmap/provider/fileprovider v{{ collector_version }}
+
+converters:
+  - gomod: go.opentelemetry.io/collector/confmap/converter/expandconverter v{{ collector_version }}
+
+extensions:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v{{ collector_version }}
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v{{ collector_version }}
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v{{ collector_version }}
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/opensearchexporter v{{ collector_version }}

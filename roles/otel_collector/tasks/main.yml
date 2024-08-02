@@ -4,8 +4,6 @@
   ansible.builtin.apt:
     deb: "{{ package_url }}"
   become: true
-  notify:
-    - Restart Collector
   register: package_install_res
 
 - name: Create directories
@@ -28,8 +26,6 @@
     group: otel
   become: true
   register: config_task_res
-  notify:
-    - Restart Collector
 
 - name: Restart Collector
   ansible.builtin.service:

@@ -1,5 +1,7 @@
 ---
 receivers:
+  fluentforward:
+    endpoint: 127.0.0.1:6543
   otlp/traces:
     protocols:
       grpc:
@@ -9,8 +11,14 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:55690
 
+
 processors:
   batch:
+  resource:
+    attributes:
+    - action: insert
+      key: loki.format
+      value: json
 
 exporters:
   otlp/jaeger: # Jaeger supports OTLP directly
@@ -30,6 +38,8 @@ exporters:
     tls:
       insecure: true
       insecure_skip_verify: true
+  otlphttp/loki:
+    endpoint: http://{{ ansible_default_ipv4.address }}:3100/otlp/v1/logs
 
 service:
   pipelines:
@@ -41,6 +51,10 @@ service:
       receivers: [otlp/metrics]
       processors: [batch]
       exporters: [prometheusremotewrite]
+    logs:
+      receivers: [fluentforward]
+      processors: [batch]
+      exporters: [otlphttp/loki]
   extensions: [health_check, pprof, zpages]
 
 extensions:

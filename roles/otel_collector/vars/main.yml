@@ -1,4 +1,6 @@
 ---
 # vars file for otel_collector
-collector_version: 0.102.0
+collector_version: 0.106.1
 package_url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ collector_version }}/otelcol_{{ collector_version }}_linux_arm64.deb"
+builder_package_url: "https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2Fv{{ collector_version }}/ocb_{{ collector_version }}_linux_arm64"
+go_sdk_package_url: ttps://go.dev/dl/go1.22.5.linux-arm64.tar.gz
