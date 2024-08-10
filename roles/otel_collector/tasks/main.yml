@@ -1,52 +1,79 @@
 ---
 # tasks file for otel_collector
-- name: Install OTEL Collector package
-  ansible.builtin.apt:
-    deb: "{{ package_url }}"
+# - name: Install OTEL Collector package
+#   ansible.builtin.apt:
+#     deb: "{{ package_url }}"
+#   become: true
+#   register: package_install_res
+
+- name: Create OTEL Collector user group
+  ansible.builtin.group:
+    name: otel
+    state: present
   become: true
-  register: package_install_res
+
+- name: Create OTEL Collector system user
+  ansible.builtin.user:
+    name: otel
+    comment: OTEL Collector service user
+    home: "{{ install_dir }}/"
+    group: otel
+    state: present
+    system : true
+  become: true
+
 
 - name: Create directories
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
+    mode: '0755'
     owner: otel
     group: otel
   become: true
-  register: folders_creation_res
   loop:
-    - "/etc/otelcol"
+    - "{{ install_dir }}"
+    - "{{ install_dir }}/bin"
+    - "{{ install_dir }}/conf"
+    - "{{ install_dir }}/data"
+    - "{{ install_dir }}/tools"
+    - "{{ install_dir }}/tmp"
+  register: create_folders_res
 
 
-- name: Generate config.yaml file
-  ansible.builtin.template:
-    src: config.yaml
-    dest: /etc/otelcol/config.yaml
-    owner: otel
-    group: otel
-  become: true
-  register: config_task_res
 
-- name: Restart Collector
-  ansible.builtin.service:
-    name: "otelcol"
-    state: "restarted"
-    enabled: true
-  when: config_task_res.changed or folders_creation_res.changed or package_install_res.changed
-  become: true
+# - name: Generate config.yaml file
+#   ansible.builtin.template:
+#     src: config.yaml
+#     dest: /etc/otelcol/config.yaml
+#     owner: otel
+#     group: otel
+#   become: true
+#   register: config_task_res
 
-- name: Wait until OTEL Collector is up and running...
-  uri:
-    url: 'http://{{ ansible_default_ipv4.address }}:3100/ready'
-    return_content: yes
-    validate_certs: no
-    status_code:
-      - 200
-  until: uri_output.status == 200
-  retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
-  delay: 15 # Every 15 seconds
-  register: uri_output
+# - name: Restart Collector
+#   ansible.builtin.service:
+#     name: "otelcol"
+#     state: "restarted"
+#     enabled: true
+#   when: config_task_res.changed or folders_creation_res.changed or package_install_res.changed
+#   become: true
 
-- name: API test result
-  debug:
-    msg: "{{ uri_output }}"
+# - name: Wait until OTEL Collector is up and running...
+#   uri:
+#     url: 'http://{{ ansible_default_ipv4.address }}:3100/ready'
+#     return_content: yes
+#     validate_certs: no
+#     status_code:
+#       - 200
+#   until: uri_output.status == 200
+#   retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
+#   delay: 15 # Every 15 seconds
+#   register: uri_output
+
+# - name: API test result
+#   debug:
+#     msg: "{{ uri_output }}"
+
+- name: Building OTEL Collector
+  import_tasks: build_collector.yml
