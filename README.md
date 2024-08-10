@@ -4,6 +4,10 @@ A repository to try some setups to test
 observability tools and approaches.
 
 
+## Planned observability backend diagram ##
+
+![Planned observability backend diagram](docs/diagrams/backend_diagram.svg)
+
 ## Ports by service ##
 
 - `Jaeger`:

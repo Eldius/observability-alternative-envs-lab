@@ -1,86 +1,4 @@
 ---
-
-# - name: Create OTEL Collector user group
-#   ansible.builtin.group:
-#     name: otel
-#     state: present
-#   become: true
-
-# - name: Create OTEL Collector system user
-#   ansible.builtin.user:
-#     name: otel
-#     comment: OTEL Collector service user
-#     group: otel
-#     state: present
-#     system : true
-#   become: true
-
-# - name: Create directories
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     mode: '0755'
-#     owner: otel
-#     group: otel
-#   become: true
-#   loop:
-#     - "{{ install_dir }}"
-#     - "{{ install_dir }}/conf"
-#     - "{{ install_dir }}/data"
-#     - "{{ install_dir }}/tmp"
-#   register: create_folders_res
-
-# - name: Unpack Jaeger bin package
-#   ansible.builtin.unarchive:
-#     src: "{{ download_url }}"
-#     dest: "{{ install_dir }}"
-#     mode: '0755'
-#     owner: otel
-#     group: otel
-#     remote_src: true
-#     extra_opts:
-#       - '--strip-components=1'
-#       - '--show-stored-names'
-#   become: true
-#   register: create_folders_res
-
-
-# - name: Create service definition file
-#   ansible.builtin.template:
-#     src: loki.service.j2
-#     dest: /etc/systemd/system/loki.service
-#     owner: root
-#     group: root
-#   become: true
-#   notify:
-#     - Restart OTEL Collector
-
-# - name: Create OTEL Collector configuration file
-#   ansible.builtin.template:
-#     src: local-config.yaml.j2
-#     dest: "{{ install_dir }}/conf/local-config.yaml"
-#     owner: loki
-#     group: loki
-#   become: true
-#   notify:
-#     - Restart Loki
-
-# - name: Wait until Grafana Tempo is up and running...
-#   uri:
-#     url: 'http://{{ ansible_default_ipv4.address }}:3100/ready
-#     return_content: yes
-#     validate_certs: no
-#     status_code:
-#       - 200
-#   until: uri_output.status == 200
-#   retries: 24 # Retries for 24 * 15 seconds = 360 seconds = 6 minutes
-#   delay: 15 # Every 15 seconds
-#   register: uri_output
-
-# - name: API test result
-#   debug:
-#     msg: "{{ uri_output }}"
-
 - name: Testing variables
   debug:
     msg:
@@ -111,9 +29,21 @@
     PATH: "$PATH:{{ install_dir }}/tools/go/bin"
   register: go_version_res
 
-- name: Debug downloaded files
+- name: Debug Go version
   debug:
     msg: "{{ go_version_res.stdout_lines }}"
+
+- name: Debug PATH variable
+  shell: "echo $PATH"
+  environment:
+    PATH: "$PATH:{{ install_dir }}/tools/go/bin"
+  register: path_variable_res
+
+- name: Debug PATH variable
+  debug:
+    msg: "{{ path_variable_res.stdout_lines }}"
+
+
 
 - name: Download OTEL Collector Builder
   ansible.builtin.get_url:
@@ -139,6 +69,15 @@
     PATH: "$PATH:{{ install_dir }}/tools/go/bin"
     GOCACHE: "{{ install_dir }}/tmp"
   register: otelcol_build_res
+  become: true
+
+- name: Change collector binary ownership
+  file:
+    path: "{{ install_dir }}/bin/otelcol"
+    state: file
+    owner: otel
+    group: otel
+    mode: "0755"
 
 - name: Build output
   debug:

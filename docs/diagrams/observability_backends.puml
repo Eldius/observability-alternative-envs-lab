@@ -1,0 +1,25 @@
+@startuml "backend_diagram"
+
+skinparam BackgroundColor "transparent"
+title "Observability backend tools diagram"
+
+APP --> [OTEL Collector] : logs
+APP --> [OTEL Collector] : traces
+APP --> [OTEL Collector] : metrics
+[OTEL Collector] --> [Grafana Mimir] : logs
+[OTEL Collector] --> [Prometheus] : metrics
+[OTEL Collector] --> [Grafana Tempo] : traces
+[OTEL Collector] --> [Jaeger] : traces
+
+[Prometheus] --> [Grafana Mimir] : metrics
+
+Grafana --> [Grafana Loki] : logs
+Grafana --> [Grafana Tempo] : traces
+Grafana --> [Prometheus] : metrics
+
+package "todo" {
+    [OTEL Collector] --> [OpenSearch] : logs
+    [OTEL Collector] --> [OpenSearch] : metrics
+    [OTEL Collector] --> [OpenSearch] : traces
+}
+@enduml

@@ -1,4 +1,4 @@
 ---
 - hosts: all
   roles:
-    - role: "roles/prepare_so"
+    - role: "../roles/prepare_os"
