@@ -26,7 +26,7 @@
 - name: Debug Go version
   shell: "go version"
   environment:
-    PATH: "$PATH:{{ install_dir }}/tools/go/bin"
+    PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
   register: go_version_res
 
 - name: Debug Go version
@@ -36,7 +36,7 @@
 - name: Debug PATH variable
   shell: "echo $PATH"
   environment:
-    PATH: "$PATH:{{ install_dir }}/tools/go/bin"
+    PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
   register: path_variable_res
 
 - name: Debug PATH variable
@@ -66,7 +66,7 @@
 - name: Build OTEL Collector
   shell: "{{ install_dir }}/tools/ocb --config {{ install_dir }}/conf/otelcol-builder.yaml"
   environment:
-    PATH: "$PATH:{{ install_dir }}/tools/go/bin"
+    PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
     GOCACHE: "{{ install_dir }}/tmp"
   register: otelcol_build_res
   become: true
@@ -86,4 +86,4 @@
 # - name: Building OTEL Collector
 #   shell: "echo $MY_ENV_VARIABLE"
 #   environment:
-#     PATH: "$PATH:{{ install_dir }}/tools/go/bin"
+#     PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
