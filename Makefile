@@ -41,6 +41,12 @@ collector:
 		playbooks/collector-playbook.yml
 
 
+collector-test:
+	ansible-playbook \
+		-i env/$(ENV_NAME) \
+		playbooks/collector-playbook-test.yml
+
+
 tempo:
 	ansible-playbook \
 		-i env/$(ENV_NAME) \

@@ -77,6 +77,7 @@
     owner: otel
     group: otel
     mode: "0755"
+  become: true
 
 - name: Build output
   ansible.builtin.debug:

@@ -28,14 +28,14 @@ processors:
 {% endif %}
 
 exporters:
-{% otel_collector_jaeger_exporter_enabled %}
+{% if otel_collector_jaeger_exporter_enabled %}
   otlp/jaeger: # Jaeger supports OTLP directly
     endpoint: "{{ ansible_default_ipv4.address }}:4317"
     tls:
       insecure: true
       insecure_skip_verify: true
 {% endif %}
-{% otel_collector_prometheus_remotewrite_enabled %}
+{% if otel_collector_prometheus_remotewrite_enabled %}
   prometheusremotewrite:
     endpoint: http://{{ ansible_default_ipv4.address }}:9009/api/v1/push
     tls:
@@ -59,22 +59,22 @@ exporters:
   otlphttp/victoriametrics:
     compression: gzip
     encoding: proto
-    endpoint: http://<collector/vmagent>.<namespace>.svc.cluster.local:<port>/opentelemetry
+    endpoint: "http://{{ ansible_default_ipv4.address }}:8428/opentelemetry"
 {% endif %}
 service:
   pipelines:
     traces/otlp:
       receivers: [otlp/traces]
       processors: [batch]
-      exporters: [otlp/jaeger, otlp/tempo,]
+      exporters: [otlp/jaeger]
     metrics/otlp:
       receivers: [otlp/metrics,]
       processors: [batch]
-      exporters: [prometheusremotewrite,]
-    logs:
-      receivers: [fluentforward]
-      processors: [batch]
-      exporters: [otlphttp/loki,]
+      exporters: [otlphttp/victoriametrics]
+    # logs:
+    #   receivers: [fluentforward]
+    #   processors: [batch]
+    #   exporters: [otlphttp/loki,]
   extensions: [health_check, pprof, zpages]
 
 extensions:
