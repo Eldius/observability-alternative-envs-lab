@@ -8,12 +8,12 @@
   ansible.builtin.service_facts:
   become: true
 
-- name: Verify service existss?
-  set_fact:
+- name: Verify service existss
+  ansible.builtin.set_fact:
     prometheus_service_exists: "{{ 'prometheus.service' in ansible_facts.services }}"
 
 - name: Debug service existence...
-  debug:
+  ansible.builtin.debug:
     msg:
       exists: "{{ 'prometheus.service' in ansible_facts.services }}"
   when: prometheus_service_exists

@@ -24,6 +24,8 @@ observability tools and approaches.
 - [OTEL Collector Agent mode configuration](https://opentelemetry.io/docs/collector/deployment/agent/)
 - [OTEL Collector Configuration structure](https://opentelemetry.io/docs/collector/configuration/)
 
+- [How to: Install ZeroTier on Raspberry Pi - RaspiServer](https://raspiserver.com/how-to-install-zerotier-on-raspberry-pi/)
+
 
 ## code snippets ##
 
@@ -38,4 +40,14 @@ sudo dpkg -i otelcol_0.102.0_linux_arm64.deb
 ```shell
 # Install Loki plugin to Docker
 docker plugin install grafana/loki-docker-driver:2.9.2 --alias loki --grant-all-permissions
+```
+
+```shell
+# Install ZeroTier
+curl -s https://install.zerotier.com | sudo bash
+sudo systemctl enable zerotier-one
+sudo zerotier-cli status
+sudo zerotier-cli join [Network ID]
+sudo zerotier-cli listnetworks 
+sudo touch /var/lib/zerotier-one/networks.d/[Network ID].conf
 ```

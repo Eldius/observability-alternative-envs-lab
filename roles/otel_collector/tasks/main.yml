@@ -19,7 +19,7 @@
     home: "{{ install_dir }}"
     group: otel
     state: present
-    system : true
+    system: true
   become: true
 
 
@@ -41,23 +41,25 @@
   register: create_folders_res
 
 - name: Building OTEL Collector
-  import_tasks: build_collector.yml
+  ansible.builtin.import_tasks: build_collector.yml
 
 - name: Generate config.yaml file
   ansible.builtin.template:
-    src: config.yaml
+    src: config.yaml.j2
     dest: "{{ install_dir }}/conf/config.yaml"
     owner: otel
     group: otel
+    mode: "0766"
   become: true
   register: config_task_res
 
 - name: Generate environment file
   ansible.builtin.template:
-    src: config.yaml
+    src: config.yaml.j2
     dest: "{{ install_dir }}/conf/otelcol.conf"
     owner: otel
     group: otel
+    mode: "0766"
   become: true
   register: config_task_res
 

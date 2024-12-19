@@ -24,6 +24,10 @@
   ansible.builtin.import_tasks: uninstall_tempo.yml
   when: "uninstall_tempo"
 
+- name: Uninstall VictoriaMetrics
+  ansible.builtin.import_tasks: uninstall_victoriametrics.yml
+  when: "uninstall_victoriametrics"
+
 - name: Reboot server
   ansible.builtin.reboot:
   become: true

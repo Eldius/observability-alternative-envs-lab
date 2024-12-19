@@ -1,0 +1,75 @@
+---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Remove VictoriaMetrics service
+  ansible.builtin.service:
+    name: victoriametrics
+    enabled: false
+    state: stopped
+  become: true
+  when: "'victoriametrics.service' in ansible_facts.services"
+
+- name: Clear data and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/local/bin/victoria-metrics-prod
+    - /etc/systemd/system/victoriametrics.service
+    - /usr/local/bin/vmagent-prod
+    - /usr/local/bin/vmalert-prod
+    - /usr/local/bin/vmauth-prod
+    - /usr/local/bin/vmbackup-prod
+    - /usr/local/bin/vmrestore-prod
+    - /var/lib/victoria-metrics
+  become: true
+
+- name: Remove VictoriaMetrics system user
+  ansible.builtin.user:
+    name: victoriametrics
+    group: victoriametrics
+    state: absent
+  become: true
+
+- name: Remove VictoriaMetrics user group
+  ansible.builtin.group:
+    name: victoriametrics
+    state: absent
+  become: true
+
+
+---
+- name: Uninstall VictoriaMetrics Single Node
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Stop VictoriaMetrics service
+      ansible.builtin.systemd:
+        name: victoriametrics
+        state: stopped
+        enabled: false
+
+    - name: Remove VictoriaMetrics package
+      ansible.builtin.apt:
+        name: victoriametrics
+        state: absent
+
+    - name: Remove VictoriaMetrics data directory
+      ansible.builtin.file:
+        path: /path/to/data-directory
+        state: absent
+        recursive: true
+
+    - name: Remove VictoriaMetrics configuration files
+      ansible.builtin.file:
+        path: /etc/victoriametrics
+        state: absent
+        recursive: true
+
+    - name: Clean up any remaining dependencies
+      ansible.builtin.apt:
+        name: ""
+        state: absent
+        autoremove: true

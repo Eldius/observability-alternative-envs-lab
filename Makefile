@@ -58,3 +58,9 @@ setup:
 		-i env/$(ENV_NAME) \
 		playbooks/reinstall-playbook.yml
 	@echo "Setup finished!"
+
+victoriametrics:
+	ansible-playbook \
+		-i env/$(ENV_NAME) \
+		playbooks/victoriametrics-playbook.yml
+	@echo "Setup finished!"

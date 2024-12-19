@@ -34,16 +34,14 @@
     msg: "{{ go_version_res.stdout_lines }}"
 
 - name: Debug PATH variable
-  shell: "echo $PATH"
+  ansible.builtin.shell: "echo $PATH"
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
   register: path_variable_res
 
 - name: Debug PATH variable
-  debug:
+  ansible.builtin.debug:
     msg: "{{ path_variable_res.stdout_lines }}"
-
-
 
 - name: Download OTEL Collector Builder
   ansible.builtin.get_url:
@@ -56,15 +54,16 @@
 
 - name: Generate otelcol-builder.yaml file
   ansible.builtin.template:
-    src: otelcol-builder.yaml
+    src: otelcol-builder.yaml.j2
     dest: "{{ install_dir }}/conf/otelcol-builder.yaml"
     owner: otel
     group: otel
+    mode: '0755'
   become: true
   register: config_task_res
 
 - name: Build OTEL Collector
-  shell: "{{ install_dir }}/tools/ocb --config {{ install_dir }}/conf/otelcol-builder.yaml"
+  ansible.builtin.shell: "{{ install_dir }}/tools/ocb --config {{ install_dir }}/conf/otelcol-builder.yaml"
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
     GOCACHE: "{{ install_dir }}/tmp"
@@ -72,7 +71,7 @@
   become: true
 
 - name: Change collector binary ownership
-  file:
+  ansible.builtin.file:
     path: "{{ install_dir }}/bin/otelcol"
     state: file
     owner: otel
@@ -80,7 +79,7 @@
     mode: "0755"
 
 - name: Build output
-  debug:
+  ansible.builtin.debug:
     msg: "{{ otelcol_build_res.stdout_lines }}"
 
 # - name: Building OTEL Collector

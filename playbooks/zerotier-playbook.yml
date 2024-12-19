@@ -1,0 +1,4 @@
+---
+- hosts: opensearch
+  roles:
+    - role: "roles/zerotier_vpn"
