@@ -2,31 +2,31 @@
 # tasks file for clean_env
 - name: Uninstall Grafana
   ansible.builtin.import_tasks: uninstall_grafana.yml
-  when: "uninstall_grafana"
+  when: "clean_env_uninstall_grafana"
 
 - name: Uninstall Prometheus
   ansible.builtin.import_tasks: uninstall_prometheus.yml
-  when: "uninstall_prometheus"
+  when: "clean_env_uninstall_prometheus"
 
 - name: Uninstall Loki
   ansible.builtin.import_tasks: uninstall_loki.yml
-  when: "uninstall_loki"
+  when: "clean_env_uninstall_loki"
 
 - name: Uninstall OTEL Collector
   ansible.builtin.import_tasks: uninstall_otelcol.yml
-  when: "uninstall_otelcol"
+  when: "clean_env_uninstall_otelcol"
 
 - name: Uninstall Jaeger
   ansible.builtin.import_tasks: uninstall_jaeger.yml
-  when: "uninstall_jaeger"
+  when: "clean_env_uninstall_jaeger"
 
 - name: Uninstall Grafana Tempo
   ansible.builtin.import_tasks: uninstall_tempo.yml
-  when: "uninstall_tempo"
+  when: "clean_env_uninstall_tempo"
 
 - name: Uninstall VictoriaMetrics
   ansible.builtin.import_tasks: uninstall_victoriametrics.yml
-  when: "uninstall_victoriametrics"
+  when: "clean_env_uninstall_victoriametrics"
 
 - name: Reboot server
   ansible.builtin.reboot:

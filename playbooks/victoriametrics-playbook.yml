@@ -10,12 +10,15 @@
         victoriametrics_delete_auth_key: "123P@ss"
         victoriametrics_snapshot_auth_key: "123P@ss"
         victoriametrics_install_vmutil: true
+        victoriametrics_data_dir: /usr/local/victoriametrics
+        victoriametrics_self_scrape_interval: "30s"
+        victoriametrics_search_max_unique_timeseries: "300000"
         victoriametrics_service_args:
-          storageDataPath: "{{ victoriametrics_data_dir }}"
+          storageDataPath: "{{ victoriametrics_data_dir }}/data"
           selfScrapeInterval: "{{ victoriametrics_self_scrape_interval }}"
-          retentionPeriod: "{{ victoriametrics_retention_period_months }}"
-          maxConcurrentInserts: 32
+          retentionPeriod: "1"
+          maxConcurrentInserts: 8
           "search.maxUniqueTimeseries": "{{ victoriametrics_search_max_unique_timeseries }}"
-          "vmalert.proxyURL": "http://192.168.0.68:8428/vmalert/"
+          "vmui.customDashboardsPath": "{{ victoriametrics_data_dir }}/dashboards"
 
       no_log: false

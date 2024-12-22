@@ -68,18 +68,17 @@ service:
       processors: [batch]
       exporters: [otlp/jaeger]
     metrics/otlp:
-      receivers: [otlp/metrics,]
+      receivers: [otlp/metrics]
       processors: [batch]
       exporters: [otlphttp/victoriametrics]
     # logs:
     #   receivers: [fluentforward]
     #   processors: [batch]
-    #   exporters: [otlphttp/loki,]
-  extensions: [health_check, pprof, zpages]
+    #   exporters: [{% if otel_collector_loki_exporter_enabled %}otlphttp/loki, {% endif %},]
+  extensions: [health_check, pprof]
 
 extensions:
   pprof:
-  zpages:
   health_check:
     endpoint: "localhost:13133"
     path: "/health/status"
