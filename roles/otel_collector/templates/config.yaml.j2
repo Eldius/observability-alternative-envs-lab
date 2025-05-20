@@ -67,10 +67,10 @@ service:
       receivers: [otlp/traces]
       processors: [batch]
       exporters: [otlp/jaeger]
-    metrics/otlp:
-      receivers: [otlp/metrics,]
-      processors: [batch]
-      exporters: [otlphttp/victoriametrics]
+    # metrics/otlp:
+    #   receivers: [otlp/metrics,]
+    #   processors: [batch]
+    #   exporters: [otlphttp/victoriametrics]
     # logs:
     #   receivers: [fluentforward]
     #   processors: [batch]

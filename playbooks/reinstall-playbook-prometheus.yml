@@ -2,11 +2,11 @@
 - name: Installs Prometheus environment
   hosts: prometheus
   roles:
-    - role: "clean_env"
-    - role: "prepare_os"
-    - role: "grafana_loki"
-    - role: "jaeger"
-    - role: "prometheus"
-    - role: "grafana_tempo"
-    - role: "grafana"
-    - role: "otel_collector"
+    # - role: "roles/clean_env"
+    - role: "roles/prepare_os"
+    - role: "roles/grafana_loki"
+    - role: "roles/jaeger"
+    - role: "roles/prometheus"
+    - role: "roles/grafana_tempo"
+    - role: "roles/grafana"
+    - role: "roles/otel_collector"

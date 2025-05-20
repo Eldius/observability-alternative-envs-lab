@@ -17,6 +17,8 @@
     group: otel
     remote_src: true
   become: true
+  args:
+    creates: "{{ install_dir }}/tools/go"
 
 - name: List Go SDK files
   shell: "ls -lha {{ install_dir }}/tools"
@@ -51,6 +53,14 @@
     owner: otel
     group: otel
   become: true
+
+# - name: Install OTEL Collector Builder
+#   ansible.builtin.shell: "{{ builder_install_cmd }}"
+#   environment:
+#     PATH: "{{ ansible_env.PATH }}:{{ install_dir }}/tools/go/bin"
+#     GOCACHE: "{{ install_dir }}/tmp"
+#   register: otelcol_build_res
+#   become: true
 
 - name: Generate otelcol-builder.yaml file
   ansible.builtin.template:

@@ -62,7 +62,7 @@ mimir:
 setup:
 	ansible-playbook \
 		-i env/$(ENV_NAME) \
-		playbooks/reinstall-playbook.yml
+		playbooks/reinstall-playbook-prometheus.yml
 	@echo "Setup finished!"
 
 victoriametrics:

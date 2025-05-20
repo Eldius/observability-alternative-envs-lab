@@ -38,38 +38,31 @@
     state: absent
   become: true
 
+- name: Stop VictoriaMetrics service
+  ansible.builtin.systemd:
+    name: victoriametrics
+    state: stopped
+    enabled: false
 
----
-- name: Uninstall VictoriaMetrics Single Node
-  hosts: all
-  become: true
+- name: Remove VictoriaMetrics package
+  ansible.builtin.apt:
+    name: victoriametrics
+    state: absent
 
-  tasks:
-    - name: Stop VictoriaMetrics service
-      ansible.builtin.systemd:
-        name: victoriametrics
-        state: stopped
-        enabled: false
+- name: Remove VictoriaMetrics data directory
+  ansible.builtin.file:
+    path: /path/to/data-directory
+    state: absent
+    recursive: true
 
-    - name: Remove VictoriaMetrics package
-      ansible.builtin.apt:
-        name: victoriametrics
-        state: absent
+- name: Remove VictoriaMetrics configuration files
+  ansible.builtin.file:
+    path: /etc/victoriametrics
+    state: absent
+    recursive: true
 
-    - name: Remove VictoriaMetrics data directory
-      ansible.builtin.file:
-        path: /path/to/data-directory
-        state: absent
-        recursive: true
-
-    - name: Remove VictoriaMetrics configuration files
-      ansible.builtin.file:
-        path: /etc/victoriametrics
-        state: absent
-        recursive: true
-
-    - name: Clean up any remaining dependencies
-      ansible.builtin.apt:
-        name: ""
-        state: absent
-        autoremove: true
+- name: Clean up any remaining dependencies
+  ansible.builtin.apt:
+    name: ""
+    state: absent
+    autoremove: true
