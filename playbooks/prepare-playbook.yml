@@ -1,4 +1,5 @@
 ---
-- hosts: all
+- name: "Prepare OS before work"
+  hosts: all
   roles:
     - role: "../roles/prepare_os"
