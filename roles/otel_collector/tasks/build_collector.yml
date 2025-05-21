@@ -79,6 +79,8 @@
     GOCACHE: "{{ install_dir }}/tmp"
   register: otelcol_build_res
   become: true
+  args:
+    creates: "{{ install_dir }}/bin/otelcol"
 
 - name: Change collector binary ownership
   ansible.builtin.file:

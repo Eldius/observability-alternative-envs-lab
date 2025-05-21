@@ -1,9 +1,9 @@
 ---
 # vars file for otel_collector
-collector_version: 0.116.0
+collector_version: 0.126.0
 install_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else ansible_architecture }}"
 install_dir: /usr/local/otel
-go_version: 1.23.3
+go_version: 1.24.2
 
 package_url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ collector_version }}/otelcol_{{ collector_version }}_{{ collector_version }}_{{ ansible_system|lower }}_{{ install_arch }}.deb"
 go_sdk_package_url: "https://go.dev/dl/go{{ go_version }}.{{ ansible_system|lower }}-{{ install_arch }}.tar.gz"

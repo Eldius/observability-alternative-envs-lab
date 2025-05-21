@@ -1,13 +1,13 @@
 ---
 # defaults file for clean_env
-uninstall_grafana: true
-uninstall_prometheus: true
-uninstall_otelcol: true
-uninstall_loki: true
-uninstall_jaeger: true
-uninstall_tempo: true
-prometheus_install_dir: /usr/local/prometheus
-otelcol_install_dir: /etc/otelcol
-loki_install_dir: /usr/local/loki
-jaeger_install_dir: /usr/local/jaeger
-uninstall_victoriametrics: true
+clean_env_uninstall_grafana: true
+clean_env_uninstall_prometheus: true
+clean_env_uninstall_otelcol: true
+clean_env_uninstall_loki: true
+clean_env_uninstall_jaeger: true
+clean_env_uninstall_tempo: true
+clean_env_prometheus_install_dir: /usr/local/prometheus
+clean_env_otelcol_install_dir: /etc/otelcol
+clean_env_loki_install_dir: /usr/local/loki
+clean_env_jaeger_install_dir: /usr/local/jaeger
+clean_env_uninstall_victoriametrics: true

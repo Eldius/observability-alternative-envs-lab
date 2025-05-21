@@ -51,3 +51,8 @@ sudo zerotier-cli join [Network ID]
 sudo zerotier-cli listnetworks 
 sudo touch /var/lib/zerotier-one/networks.d/[Network ID].conf
 ```
+
+```shell
+# Testing log shipping
+docker run --rm --log-driver=fluentd --log-opt fluentd-address=192.168.0.166:6543 hello-world
+```

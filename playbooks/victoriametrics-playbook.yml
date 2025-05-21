@@ -2,7 +2,7 @@
 - name: Installs VictoriaMetrics
   hosts: prometheus
   roles:
-    - role: "victoriametrics.cluster.single"
+    - role: "victoriametrics.cluster.vmsingle"
       become: true
       vars:
         victoriametrics_system_user: "victoria"
@@ -10,12 +10,25 @@
         victoriametrics_delete_auth_key: "123P@ss"
         victoriametrics_snapshot_auth_key: "123P@ss"
         victoriametrics_install_vmutil: true
+        victoriametrics_data_dir: /usr/local/victoriametrics
+        victoriametrics_self_scrape_interval: "30s"
+        victoriametrics_search_max_unique_timeseries: "300000"
         victoriametrics_service_args:
-          storageDataPath: "{{ victoriametrics_data_dir }}"
+          storageDataPath: "{{ victoriametrics_data_dir }}/data"
           selfScrapeInterval: "{{ victoriametrics_self_scrape_interval }}"
-          retentionPeriod: "{{ victoriametrics_retention_period_months }}"
+          retentionPeriod: "1"
           maxConcurrentInserts: 32
           "search.maxUniqueTimeseries": "{{ victoriametrics_search_max_unique_timeseries }}"
-          "vmalert.proxyURL": "http://192.168.0.68:8428/vmalert/"
+          "vmui.customDashboardsPath": "{{ victoriametrics_data_dir }}/dashboards"
+          "vmui.defaultTimezone": "America/Sao_Paulo"
 
-      no_log: false
+    - role: "victoriametrics.cluster.vlsingle"
+      become: true
+      vars:
+        victorialogs_system_user: "victoria"
+        victorialogs_system_group: "{{ victorialogs_system_user }}"
+        victorialogs_data_dir: /usr/local/victorialogs
+        victorialogs_service_args:
+          storageDataPath: "{{ victorialogs_data_dir }}/data"
+          retentionPeriod: "1"
+          "vmui.defaultTimezone": "America/Sao_Paulo"
