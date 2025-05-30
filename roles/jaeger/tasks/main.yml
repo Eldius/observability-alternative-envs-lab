@@ -44,6 +44,16 @@
   notify:
     - Restart Jaeger
 
+- name: Generate environment file
+  ansible.builtin.template:
+    src: otelcol.conf.j2
+    dest: "{{ install_dir }}/conf/otelcol.conf"
+    owner: otel
+    group: otel
+    mode: "0766"
+  become: true
+  register: config_task_res
+
 - name: Create service definition file
   ansible.builtin.template:
     src: jaeger.service.j2

@@ -1,6 +1,6 @@
 ---
 # vars file for otel_collector
-collector_version: 0.126.0
+collector_version: 0.127.0
 install_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else ansible_architecture }}"
 install_dir: /usr/local/otel
 go_version: 1.24.2

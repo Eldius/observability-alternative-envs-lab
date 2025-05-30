@@ -1,41 +1,21 @@
 ---
 receivers:
-{% if otel_collector_fluentforward_receiver_enabled == 1 %}
   fluentforward:
     endpoint: 127.0.0.1:6543
-{% endif %}
-{% if otel_collector_otlptraces_receiver_enabled %}
-  otlp/traces:
+  otlp:
     protocols:
       grpc:
         endpoint: 0.0.0.0:55689
-{% endif %}
-{% if otel_collector_otlpmetrics_receiver_enabled %}
-  otlp/metrics:
-    protocols:
-      grpc:
-        endpoint: 0.0.0.0:55690
-{% endif %}
 
 processors:
   batch:
-{% if otel_collector_loki_exporter_enabled %}
-  resource:
-    attributes:
-    - action: insert
-      key: loki.format
-      value: json
-{% endif %}
 
 exporters:
-{% if otel_collector_jaeger_exporter_enabled %}
   otlp/jaeger: # Jaeger supports OTLP directly
     endpoint: "{{ ansible_default_ipv4.address }}:4317"
     tls:
       insecure: true
       insecure_skip_verify: true
-{% endif %}
-{% if otel_collector_prometheus_remotewrite_enabled %}
   prometheusremotewrite:
     endpoint: http://{{ ansible_default_ipv4.address }}:9009/api/v1/push
     tls:
@@ -43,42 +23,27 @@ exporters:
       insecure_skip_verify: true
     resource_to_telemetry_conversion:
       enabled: false # Convert resource attributes to metric labels
-{% endif %}
-{% if otel_collector_tempo_exporter_enabled %}
   otlp/tempo:
     endpoint: {{ ansible_default_ipv4.address }}:5317
     tls:
       insecure: true
       insecure_skip_verify: true
-{% endif %}
-{% if otel_collector_loki_exporter_enabled %}
   otlphttp/loki:
     endpoint: http://{{ ansible_default_ipv4.address }}:3100/otlp/v1/logs
-{% endif %}
-{% if otel_collector_victoriametrics_exporter_enabled %}
-  otlphttp/victoriametrics:
-    compression: gzip
-    encoding: proto
-    endpoint: "http://{{ ansible_default_ipv4.address }}:8428/opentelemetry"
-{% endif %}
 service:
   pipelines:
-    traces/otlp:
-      receivers: [otlp/traces]
+    traces:
+      receivers: [otlp]
       processors: [batch]
       exporters: [otlp/jaeger]
-    # metrics/otlp:
-    #   receivers: [otlp/metrics,]
-    #   processors: [batch]
-    #   exporters: [otlphttp/victoriametrics]
-    metrics/otlp:
-      receivers: [otlp/metrics]
+    metrics:
+      receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/victoriametrics]
-    # logs:
-    #   receivers: [fluentforward]
-    #   processors: [batch]
-    #   exporters: [{% if otel_collector_loki_exporter_enabled %}otlphttp/loki, {% endif %},]
+      exporters: [prometheusremotewrite]
+    logs:
+      receivers: [fluentforward]
+      processors: [batch]
+      exporters: [otlphttp/loki]
   extensions: [health_check, pprof]
 
 extensions:

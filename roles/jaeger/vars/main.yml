@@ -1,5 +1,7 @@
 ---
 # vars file for jaeger
-jaeger_version: 1.57.0
-download_url: "https://github.com/jaegertracing/jaeger/releases/download/v{{ jaeger_version }}/jaeger-{{ jaeger_version }}-linux-arm64.tar.gz"
+jaeger_version: 2.6.0
+jaeger_old_version: 1.69.0
+#download_url: "https://github.com/jaegertracing/jaeger/releases/download/v{{ jaeger_version }}/jaeger-{{ jaeger_version }}-linux-arm64.tar.gz"
+download_url: "https://github.com/jaegertracing/jaeger/releases/download/{{ jaeger_old_version }}/jaeger-{{ jaeger_version }}-linux-arm64.tar.gz"
 install_dir: /usr/local/jaeger
